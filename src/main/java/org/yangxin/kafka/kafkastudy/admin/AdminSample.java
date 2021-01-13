@@ -3,6 +3,7 @@ package org.yangxin.kafka.kafkastudy.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.config.ConfigResource;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -28,7 +29,18 @@ public class AdminSample {
         // 获取Topic列表
 //        listTopic();
 
-        describeTopics();
+//        describeTopics();
+
+        describeConfig();
+    }
+
+    public static void describeConfig() throws ExecutionException, InterruptedException {
+        AdminClient adminClient = adminClient();
+
+        ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, TOPIC_NAME);
+        DescribeConfigsResult describeConfigsResult = adminClient.describeConfigs(Collections.singletonList(configResource));
+        Map<ConfigResource, Config> configResourceConfigMap = describeConfigsResult.all().get();
+        System.out.printf("configResourceConfigMap: [%s]%n", configResourceConfigMap);
     }
 
     /**
@@ -96,6 +108,8 @@ public class AdminSample {
         AdminClient adminClient = adminClient();
         DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Collections.singletonList(TOPIC_NAME));
         Map<String, TopicDescription> stringTopicDescriptionMap = describeTopicsResult.all().get();
-        System.out.println(stringTopicDescriptionMap);
+//        System.out.println(stringTopicDescriptionMap);
+        System.out.printf("stringTopicDescriptionMap: [%s]%n", stringTopicDescriptionMap);
+
     }
 }
