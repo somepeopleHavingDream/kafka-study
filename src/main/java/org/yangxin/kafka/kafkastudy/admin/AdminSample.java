@@ -23,6 +23,8 @@ public class AdminSample {
 
 //        createTopic();
 
+        deleteTopic();
+
         // 获取Topic列表
         listTopic();
     }
@@ -30,7 +32,7 @@ public class AdminSample {
     /**
      * 创建Topic实例
      */
-    public static void createTopic() throws InterruptedException {
+    public static void createTopic() throws InterruptedException, ExecutionException {
         AdminClient adminClient = adminClient();
 
         // 副本因子
@@ -40,7 +42,10 @@ public class AdminSample {
 
         // adminClient.createTopics内部用了future机制，有可能子方法还未调用完毕，调用方法已经返回，导致topic创建失败
         // 暂时找不到更好的方法，只能让调用方法休眠2秒，以等待子方法执行完毕
-        TimeUnit.SECONDS.sleep(2);
+//        TimeUnit.SECONDS.sleep(2);
+
+        // 这是上面所提到的更好的方法（通过调用future的get方法）
+        topics.all().get();
     }
 
     /**
@@ -71,5 +76,14 @@ public class AdminSample {
         properties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.3.3:9092");
 
         return AdminClient.create(properties);
+    }
+
+    /**
+     * 删除Topic
+     */
+    public static void deleteTopic() throws ExecutionException, InterruptedException {
+        AdminClient adminClient = adminClient();
+        DeleteTopicsResult deleteTopicsResult = adminClient.deleteTopics(Collections.singletonList(TOPIC_NAME));
+        deleteTopicsResult.all().get();
     }
 }
