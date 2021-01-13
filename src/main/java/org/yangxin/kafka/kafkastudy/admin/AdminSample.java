@@ -23,10 +23,12 @@ public class AdminSample {
 
 //        createTopic();
 
-        deleteTopic();
+//        deleteTopic();
 
         // 获取Topic列表
-        listTopic();
+//        listTopic();
+
+        describeTopics();
     }
 
     /**
@@ -85,5 +87,15 @@ public class AdminSample {
         AdminClient adminClient = adminClient();
         DeleteTopicsResult deleteTopicsResult = adminClient.deleteTopics(Collections.singletonList(TOPIC_NAME));
         deleteTopicsResult.all().get();
+    }
+
+    /**
+     * 描述Topic
+     */
+    public static void describeTopics() throws ExecutionException, InterruptedException {
+        AdminClient adminClient = adminClient();
+        DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Collections.singletonList(TOPIC_NAME));
+        Map<String, TopicDescription> stringTopicDescriptionMap = describeTopicsResult.all().get();
+        System.out.println(stringTopicDescriptionMap);
     }
 }
