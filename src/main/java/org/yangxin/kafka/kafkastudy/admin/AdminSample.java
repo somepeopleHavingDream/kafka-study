@@ -31,7 +31,39 @@ public class AdminSample {
 
 //        describeTopics();
 
+        alterConfig();
+
         describeConfig();
+    }
+
+    /**
+     *  修改config属性
+     */
+    public static void alterConfig() throws ExecutionException, InterruptedException {
+        AdminClient adminClient = adminClient();
+//        Map<ConfigResource, Config> configResourceConfigMap = new HashMap<>();
+//
+//        ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, TOPIC_NAME);
+        // 组织两个参数
+//        Config config = new Config(Collections.singletonList(new ConfigEntry("preallocate", "true")));
+//        configResourceConfigMap.put(configResource, config);
+//
+//        AlterConfigsResult alterConfigsResult = adminClient.alterConfigs(configResourceConfigMap);
+//        alterConfigsResult.all().get();
+
+
+        /*
+            从2.3以上的版本新修改的API
+         */
+        Map<ConfigResource, Collection<AlterConfigOp>> configsMap = new HashMap<>();
+        // 组织两个参数
+        ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, TOPIC_NAME);
+        AlterConfigOp alterConfigOp = new AlterConfigOp(new ConfigEntry("preallocate", "false"),
+                AlterConfigOp.OpType.SET);
+        configsMap.put(configResource, Collections.singletonList(alterConfigOp));
+
+        AlterConfigsResult alterConfigsResult = adminClient.incrementalAlterConfigs(configsMap);
+        alterConfigsResult.all().get();
     }
 
     public static void describeConfig() throws ExecutionException, InterruptedException {
