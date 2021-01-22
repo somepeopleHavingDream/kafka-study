@@ -1,4 +1,4 @@
-package org.yangxin.kafka.kafkastudy.producer;
+package org.yangxin.kafka.kafkastudy.sample.producer;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -10,6 +10,7 @@ import java.util.Properties;
  * @author yangxin
  * 1/20/21 1:44 PM
  */
+@SuppressWarnings("DuplicatedCode")
 public class ProducerSample {
 
     public static final String TOPIC_NAME = "kafka_topic";

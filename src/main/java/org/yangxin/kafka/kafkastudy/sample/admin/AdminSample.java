@@ -1,13 +1,11 @@
-package org.yangxin.kafka.kafkastudy.admin;
+package org.yangxin.kafka.kafkastudy.sample.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.*;
-import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.config.ConfigResource;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author yangxin

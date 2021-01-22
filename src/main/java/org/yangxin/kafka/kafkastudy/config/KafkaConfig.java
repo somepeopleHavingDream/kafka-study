@@ -28,9 +28,19 @@ public class KafkaConfig {
     public KafkaProducer<String, Object> kafkaProducer() {
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
-        // acks=all，这意味着leader需要等待所有备份都成功写入日志，这种策略会保证只要有一个备份存活就不会丢失数据，这是最强的保证。
-        // acks=1，这意味着至少要等待leader已经成功将数据写入本地日志（这个地方的“本地日志”估计不是磁盘，不然说不通啊，已经写入到本地日志，怎么会挂掉丢失数据了呢？）
-        // ，但是并没有等待所有follower是否成功写入，这种情况下，如果follower没有成功备份数据，而此时leader又挂掉，则消息会丢失。
+        /*
+            前置知识：
+                分区中的所有副本统称为AR（Assigned Replicas）。
+                所有与leader副本保持一定程度同步的副本（包括Leader）组成ISR（In-Sync Replicas），
+                ISR集合是AR集合中的一个子集。
+
+            acks: Broker完成生产者请求前需要确认的数量
+            acks=0时，生产者不会等待确认，直接添加到套接字缓冲区等待发送；
+            acks=1时，等待leader写到本地日志就行；
+            acks=all或acks=-1时，等待isr中所有副本确认
+            （注意：确认都是broker接收到消息，放入到内存后就直接返回确认，不是需要等待数据写入磁盘后才返回确认，这也是Kafka快的原因。
+            这也就是Kafka在理论上不能保证消息百分百投递成功的原因。）
+         */
         properties.put(ProducerConfig.ACKS_CONFIG, kafkaProperties.getAcksConfig());
         properties.put(ProducerConfig.RETRIES_CONFIG, "0");
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, "16384");
