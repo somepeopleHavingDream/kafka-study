@@ -7,3 +7,12 @@ template:
     - {"templateId":"2","templateFilePath":"/home/yangxin/IdeaProjects/kafka-study/src/main/resources/template/template.json","active": false}
   template-result-type: 0  # 0-文件获取 1-数据库获取 2-ES
   template-result-file-path: "/home/yangxin/IdeaProjects/kafka-study/src/main/resources/template/templateResult.json"
+
+logging:
+  config: classpath:logback.xml
+
+wechat:
+  kafka:
+    bootstrap_servers: "192.168.3.3:9092"
+    acks_config: "all"
+#    partitioner_class: "
