@@ -30,11 +30,11 @@ public class AdminSample {
         // 获取Topic列表
 //        listTopic();
 
-        describeTopics();
+//        describeTopics();
 
 //        alterConfig();
 
-//        describeConfig();
+        describeConfig();
     }
 
     /**
@@ -69,7 +69,6 @@ public class AdminSample {
 
     public static void describeConfig() throws ExecutionException, InterruptedException {
         AdminClient adminClient = adminClient();
-
         ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, TOPIC_NAME);
         DescribeConfigsResult describeConfigsResult = adminClient.describeConfigs(Collections.singletonList(configResource));
         Map<ConfigResource, Config> configResourceConfigMap = describeConfigsResult.all().get();
