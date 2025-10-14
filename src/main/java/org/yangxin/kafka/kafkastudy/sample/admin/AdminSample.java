@@ -17,11 +17,11 @@ public class AdminSample {
 
     public static final String TOPIC_NAME = "kafka_topic";
 
-    public static void main(String[] args) {
-        AdminClient adminClient = AdminSample.adminClient();
-        log.info("adminClient: {}", adminClient);
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+//        AdminClient adminClient = AdminSample.adminClient();
+//        log.info("adminClient: {}", adminClient);
 
-//        createTopic();
+        createTopic();
 
 //        deleteTopic();
 
@@ -87,11 +87,11 @@ public class AdminSample {
         NewTopic newTopic = new NewTopic(TOPIC_NAME, 1, replicationFactor);
         CreateTopicsResult topics = adminClient.createTopics(Collections.singletonList(newTopic));
 
-        // adminClient.createTopics内部用了future机制，有可能子方法还未调用完毕，调用方法已经返回，导致topic创建失败
+        // adminClient.createTopics 内部用了 future 机制，有可能子方法还未调用完毕，调用方法已经返回，导致topic创建失败
         // 暂时找不到更好的方法，只能让调用方法休眠2秒，以等待子方法执行完毕
 //        TimeUnit.SECONDS.sleep(2);
 
-        // 这是上面所提到的更好的方法（通过调用future的get方法）
+        // 这是上面所提到的更好的方法（通过调用 future 的 get 方法）
         topics.all().get();
     }
 
