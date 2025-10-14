@@ -11,14 +11,15 @@ import java.util.concurrent.ExecutionException;
  * @author yangxin
  * 1/13/21 2:20 PM
  */
+@SuppressWarnings({"CommentedOutCode", "unused", "resource"})
 @Slf4j
 public class AdminSample {
 
     public static final String TOPIC_NAME = "kafka_topic";
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-//        AdminClient adminClient = AdminSample.adminClient();
-//        log.info("adminClient: [{}]", adminClient);
+    public static void main(String[] args) {
+        AdminClient adminClient = AdminSample.adminClient();
+        log.info("adminClient: {}", adminClient);
 
 //        createTopic();
 
@@ -29,7 +30,7 @@ public class AdminSample {
         // 获取Topic列表
 //        listTopic();
 
-        describeTopics();
+//        describeTopics();
 
 //        alterConfig();
 
@@ -114,13 +115,12 @@ public class AdminSample {
     }
 
     /**
-     * 设置AdminClient
+     * 设置 AdminClient
      */
     public static AdminClient adminClient() {
         Properties properties = new Properties();
-        // 9092是kafka的broker默认监听端口
-        properties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.3.3:9092");
-
+        // 9092 是 kafka 的 broker 默认监听端口
+        properties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         return AdminClient.create(properties);
     }
 
