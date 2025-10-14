@@ -25,16 +25,16 @@ public class AdminSample {
 
 //        deleteTopic();
 
-//        increasePartition(2);
+        increasePartition(2);
 
         // 获取Topic列表
 //        listTopic();
 
-//        describeTopics();
+        describeTopics();
 
 //        alterConfig();
 
-        describeConfig();
+//        describeConfig();
     }
 
     /**
@@ -148,12 +148,12 @@ public class AdminSample {
      * 增加partition数量
      */
     public static void increasePartition(int partitions) throws ExecutionException, InterruptedException {
-        AdminClient adminClient = adminClient();
+        NewPartitions newPartitions = NewPartitions.increaseTo(partitions);
 
         Map<String, NewPartitions> partitionsMap = new HashMap<>();
-        NewPartitions newPartitions = NewPartitions.increaseTo(partitions);
         partitionsMap.put(TOPIC_NAME, newPartitions);
 
+        AdminClient adminClient = adminClient();
         CreatePartitionsResult createPartitionsResult = adminClient.createPartitions(partitionsMap);
         createPartitionsResult.all().get();
     }
