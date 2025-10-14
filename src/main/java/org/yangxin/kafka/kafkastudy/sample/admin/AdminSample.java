@@ -21,14 +21,14 @@ public class AdminSample {
 //        AdminClient adminClient = AdminSample.adminClient();
 //        log.info("adminClient: {}", adminClient);
 
-        createTopic();
+//        createTopic();
 
 //        deleteTopic();
 
 //        increasePartition(2);
 
         // 获取Topic列表
-//        listTopic();
+        listTopic();
 
 //        describeTopics();
 
@@ -99,19 +99,20 @@ public class AdminSample {
      * 获取Topic列表
      */
     public static void listTopic() throws ExecutionException, InterruptedException {
-        AdminClient adminClient = adminClient();
         ListTopicsOptions listTopicsOptions = new ListTopicsOptions();
+        // 是否查看 internal 选项
         listTopicsOptions.listInternal(true);
+
+        AdminClient adminClient = adminClient();
         ListTopicsResult listTopicsResult = adminClient.listTopics(listTopicsOptions);
 //        ListTopicsResult listTopicsResult = adminClient.listTopics();
         Set<String> nameSet = listTopicsResult.names().get();
-        Collection<TopicListing> topicListingCollection = listTopicsResult.listings().get();
 
-        // 打印names
+        // 打印 names
         nameSet.forEach(System.out::println);
-        // 打印topicListingCollection
+        // 打印 topicListingCollection
+        Collection<TopicListing> topicListingCollection = listTopicsResult.listings().get();
         topicListingCollection.forEach(System.out::println);
-
     }
 
     /**
