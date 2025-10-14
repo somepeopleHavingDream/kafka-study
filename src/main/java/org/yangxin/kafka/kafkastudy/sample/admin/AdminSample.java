@@ -23,7 +23,7 @@ public class AdminSample {
 
 //        createTopic();
 
-//        deleteTopic();
+        deleteTopic();
 
 //        increasePartition(2);
 
