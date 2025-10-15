@@ -25,8 +25,8 @@ public class ProducerSample {
      */
     public static void producerSend() {
         Properties properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.3.3:9092");
-        // acks=all，这意味着leader需要等待所有备份都成功写入日志，这种策略会保证只要有一个备份存活就不会丢失数据，这是最强的保证。
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        // acks=all，这意味着 leader 需要等待所有备份都成功写入日志，这种策略会保证只要有一个备份存活就不会丢失数据，这是最强的保证。
         // acks=1，这意味着至少要等待leader已经成功将数据写入本地日志（这个地方的“本地日志”估计不是磁盘，不然说不通啊，已经写入到本地日志，怎么会挂掉丢失数据了呢？）
         // ，但是并没有等待所有follower是否成功写入，这种情况下，如果follower没有成功备份数据，而此时leader又挂掉，则消息会丢失。
         properties.put(ProducerConfig.ACKS_CONFIG, "all");

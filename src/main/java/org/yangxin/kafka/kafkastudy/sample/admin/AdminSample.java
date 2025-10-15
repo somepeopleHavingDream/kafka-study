@@ -15,22 +15,22 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class AdminSample {
 
-    public static final String TOPIC_NAME = "test-topic";
+    public static final String TOPIC_NAME = "kafka_topic";
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 //        AdminClient adminClient = AdminSample.adminClient();
 //        log.info("adminClient: {}", adminClient);
 
-//        createTopic();
+        createTopic();
 
 //        deleteTopic();
 
-        increasePartition(2);
+//        increasePartition(2);
 
         // 获取Topic列表
 //        listTopic();
 
-        describeTopics();
+//        describeTopics();
 
 //        alterConfig();
 
