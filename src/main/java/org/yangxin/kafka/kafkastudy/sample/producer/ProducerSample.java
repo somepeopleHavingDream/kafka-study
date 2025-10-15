@@ -10,18 +10,19 @@ import java.util.Properties;
  * @author yangxin
  * 1/20/21 1:44 PM
  */
-@SuppressWarnings("DuplicatedCode")
+@SuppressWarnings({"DuplicatedCode", "unused"})
 public class ProducerSample {
 
     public static final String TOPIC_NAME = "kafka_topic";
 
     public static void main(String[] args) {
         // producer异步发送
-        producerSend();
+//        producerSend();
+        producerSendWithCallbackAndPartition();
     }
 
     /**
-     * Producer异步发送演示
+     * Producer 异步发送演示
      */
     public static void producerSend() {
         Properties properties = new Properties();
@@ -51,6 +52,40 @@ public class ProducerSample {
         }
 
         // 所有的打开的通道需要关闭
+        producer.close();
+    }
+
+    /**
+     * Producer 异步发送带回调函数和 Partition 负载均衡
+     */
+    public static void producerSendWithCallbackAndPartition() {
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.put(ProducerConfig.ACKS_CONFIG, "all");
+        properties.put(ProducerConfig.RETRIES_CONFIG, "0");
+        properties.put(ProducerConfig.BATCH_SIZE_CONFIG, "16384");
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, "1");
+        properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                "org.apache.kafka.common.serialization.StringSerializer");
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                "org.apache.kafka.common.serialization.StringSerializer");
+        properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, "org.yangxin.kafka.kafkastudy.sample.producer" +
+                ".SamplePartition");
+
+        // Producer 的主对象
+        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
+
+        // 消息对象：ProducerRecorder
+        for (int i = 0; i < 10; i++) {
+            ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC_NAME,
+                    "key-" + i, "value-" + i);
+            producer.send(record,
+                    (metadata, exception) -> System.out.println(metadata.partition() + ":" + metadata.offset()));
+        }
+
+        // 所有的打开的通道需要关闭
+//        TimeUnit.SECONDS.sleep(10);
         producer.close();
     }
 }
