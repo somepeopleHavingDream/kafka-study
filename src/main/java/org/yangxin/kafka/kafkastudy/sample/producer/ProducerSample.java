@@ -45,7 +45,7 @@ public class ProducerSample {
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
         // 消息对象：ProducerRecorder
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC_NAME,
                     "key-" + i, "value-" + i);
             producer.send(record);
