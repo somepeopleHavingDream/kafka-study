@@ -17,8 +17,8 @@ public class ProducerSample {
 
     public static void main(String[] args) {
         // producer异步发送
-//        producerSend();
-        producerSendWithCallbackAndPartition();
+        producerSend();
+//        producerSendWithCallbackAndPartition();
     }
 
     /**
