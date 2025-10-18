@@ -23,7 +23,9 @@ public class ConsumerSample {
         // 手动订阅某个或某些分区，并提交 offset
 //        commitedOffsetWithPartition2();
         // 手动指定 offset 的起始位置，及手动提交 offset
-        controlOffset();
+//        controlOffset();
+        // 流量控制
+        controlPause();
     }
 
     private static void helloWorld() {
@@ -201,6 +203,72 @@ public class ConsumerSample {
                     for (ConsumerRecord<String, String> record : pRecord) {
                         System.out.printf("partition = %d offset = %d, key = %s, value = %s%n", record.partition(),
                                 record.offset(), record.key(), record.value());
+                    }
+
+                    long lastOffset = pRecord.get(pRecord.size() - 1).offset();
+                    // 单个 partition 中的 offset ，并且进行提交
+                    Map<TopicPartition, OffsetAndMetadata> offset = new HashMap<>();
+                    offset.put(partition, new OffsetAndMetadata(lastOffset + 1));
+                    // 提交 offset
+                    consumer.commitSync(offset);
+
+                    System.out.println("partition = " + partition);
+                }
+            }
+        }
+    }
+
+    /**
+     * 流量控制 - 限流
+     */
+    private static void controlPause() {
+        Properties props = new Properties();
+        props.setProperty("bootstrap.servers", "localhost:9092");
+        props.setProperty("group.id", "test");
+        props.setProperty("enable.auto.commit", "false");
+        props.setProperty("auto.commit.interval.ms", "1000");
+        props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props)) {
+            // 0,1 两个 partition
+            TopicPartition p0 = new TopicPartition(TOPIC_NAME, 0);
+            TopicPartition p1 = new TopicPartition(TOPIC_NAME, 1);
+
+            // 消费订阅某个 Topic 的某个分区
+            consumer.assign(Arrays.asList(p0, p1));
+
+            long totalNum = 40;
+            while (true) {
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(10000));
+                // 每个 partition 单独处理
+                for (TopicPartition partition : records.partitions()) {
+                    List<ConsumerRecord<String, String>> pRecord = records.records(partition);
+                    long num = 0;
+                    for (ConsumerRecord<String, String> record : pRecord) {
+                        System.out.printf("partition = %d offset = %d, key = %s, value = %s%n", record.partition(),
+                                record.offset(), record.key(), record.value());
+
+                        /*
+                            1 接收到 record 信息后，去令牌桶中拿去令牌
+                            2 如果获取到令牌，则继续业务处理
+                            3 如果获取不到令牌，则 pause 等待令牌
+                            4 当令牌桶中的令牌足够，则将 consumer 置为 resume 状态
+                         */
+
+                        num++;
+                        if (record.partition() == 0) {
+                            if (num >= totalNum) {
+                                // pause 的作用是：下次 poll 的时候不再去拉 0 分区的数据，但是在这个例子里，poll 已经把所有的 record 都拉下来了
+                                // 限流是一个持续的过程，如果一次就消费完了，而且不再产生了，那就不需要限流了
+                                consumer.pause(Collections.singletonList(p0));
+                            }
+                        }
+                        if (record.partition() == 1) {
+                            if (num == 40) {
+                                consumer.resume(Collections.singletonList(p0));
+                            }
+                        }
                     }
 
                     long lastOffset = pRecord.get(pRecord.size() - 1).offset();
