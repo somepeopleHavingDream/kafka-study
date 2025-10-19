@@ -27,18 +27,28 @@ public class StreamSample {
         // 如何构建流结构拓扑
         StreamsBuilder builder = new StreamsBuilder();
         // 构建 word count processor
-        wordCountStream(builder);
+//        wordCountStream(builder);
+        foreachStream(builder);
         final KafkaStreams streams = new KafkaStreams(builder.build(), props);
         streams.start();
     }
 
     static void wordCountStream(StreamsBuilder builder) {
+        // 不断从 INPUT_TOPIC 上获取新数据，并且追加到流上的一个抽象对象
         KStream<String, String> source = builder.stream(INPUT_TOPIC);
         // Hello World mooc
+        // KTable 是数据集合的抽象对象
         KTable<String, Long> count =
                 source.flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
                         .groupBy((key, value) -> value)
                         .count();
         count.toStream().to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
+    }
+
+    static void foreachStream(StreamsBuilder builder) {
+        // 不断从 INPUT_TOPIC 上获取新数据，并且追加到流上的一个抽象对象
+        KStream<String, String> source = builder.stream(INPUT_TOPIC);
+        source.flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
+                .foreach((key, value) -> System.out.println(key + " : " + value));
     }
 }
