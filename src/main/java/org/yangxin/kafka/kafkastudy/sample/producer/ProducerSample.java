@@ -1,10 +1,13 @@
 package org.yangxin.kafka.kafkastudy.sample.producer;
 
+import lombok.SneakyThrows;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.Properties;
+import java.util.concurrent.Future;
 
 /**
  * @author yangxin
@@ -24,6 +27,7 @@ public class ProducerSample {
     /**
      * Producer 异步发送演示
      */
+    @SneakyThrows
     public static void producerSend() {
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -48,7 +52,8 @@ public class ProducerSample {
         for (int i = 0; i < 100; i++) {
             ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC_NAME,
                     "key-" + i, "value-" + i);
-            producer.send(record);
+            Future<RecordMetadata> future = producer.send(record);
+            System.out.println(future.get());
         }
 
         // 所有的打开的通道需要关闭
