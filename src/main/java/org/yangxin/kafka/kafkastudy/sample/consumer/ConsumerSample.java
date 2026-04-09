@@ -15,7 +15,7 @@ public class ConsumerSample {
 
     public static void main(String[] args) {
         // 自动提交
-//        helloWorld();
+        helloWorld();
         // 手动提交 offset
 //        commitedOffset();
         // 手动对每个 partition 进行提交
@@ -25,7 +25,7 @@ public class ConsumerSample {
         // 手动指定 offset 的起始位置，及手动提交 offset
 //        controlOffset();
         // 流量控制
-        controlPause();
+//        controlPause();
     }
 
     private static void helloWorld() {
